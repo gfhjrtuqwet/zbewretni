@@ -753,7 +753,7 @@ local function OnRoundEnd(event)
         end
     end
 
-    if winningTeam == playerTeam or allEnemiesDead then
+    if winningTeam == playerTeam and allEnemiesDead then
         victoryFlag = 1 -- Устанавливаем флаг при победе или если все враги мертвы
         print("Victory Flag Set: " .. victoryFlag)
     else
