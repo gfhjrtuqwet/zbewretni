@@ -717,3 +717,30 @@ local function RegisterCallbacks()
         RegisterCallbacks = RegisterCallbacks,
         Cleanup = Cleanup
     }
+
+    local function get_enemy_players()
+        local local_player_index = client.GetLocalPlayerIndex()
+        local local_player = entities.GetByIndex(local_player_index)
+    
+        if not local_player then return {} end
+    
+        local enemy_players = {}
+        local max_players = globals.MaxClients()
+    
+        for i = 1, max_players do
+            local player = entities.GetByIndex(i)
+            
+            if player and player:IsAlive() and player:GetTeamNumber() ~= local_player:GetTeamNumber() then
+                table.insert(enemy_players, player)
+            end
+        end
+    
+        return enemy_players
+    end
+    
+    -- Пример использования функции
+    local enemies = get_enemy_players()
+    for _, enemy in ipairs(enemies) do
+        print("Вражеский игрок: " .. enemy:GetName())
+    end
+        
