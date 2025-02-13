@@ -784,6 +784,55 @@ end
 -- Вызов функции в нужный момент, например, в конце раунда
 CheckEnemiesAndSetVictoryFlag()
 
+local victoryFlag = 0
+local defeatFlag = 0
+
+-- Обработчик окончания раунда
+local function OnRoundEnd(event)
+    if event:GetName() ~= "round_end" then return end
+
+    local localPlayer = entities.GetLocalPlayer()
+    if not localPlayer then return end
+
+    local playerTeam = localPlayer:GetTeamNumber()
+
+    -- Проверяем, что игрок за контр-террористов (обычно команда 2)
+    if playerTeam == 2 then
+        local enemies = get_enemy_players() -- Получаем всех врагов
+        local allEnemiesDead = true
+
+        -- Проверяем состояние каждого врага
+        for _, enemy in ipairs(enemies) do
+            if enemy:IsAlive() then
+                allEnemiesDead = false
+                break
+            end
+        end
+
+        -- Если все враги мертвы, устанавливаем флаг победы
+        if allEnemiesDead then
+            victoryFlag = 1
+            print("Victory Flag Set: " .. victoryFlag)
+        else
+            defeatFlag = 1
+            print("Defeat Flag Set: " .. defeatFlag)
+        end
+    else
+        -- Логика для других команд (если необходимо)
+        local winningTeam = event:GetInt("winner")
+        if winningTeam == playerTeam then
+            victoryFlag = 1 -- Устанавливаем флаг при победе
+            print("Victory Flag Set: " .. victoryFlag)
+        else
+            defeatFlag = 1
+            print("Defeat Flag Set: " .. defeatFlag)
+        end
+    end
+end
+
+client.AllowListener("round_end")
+callbacks.Register("FireGameEvent", "RoundEndHandler", OnRoundEnd)
+
 
     return {
         RegisterCallbacks = RegisterCallbacks,
